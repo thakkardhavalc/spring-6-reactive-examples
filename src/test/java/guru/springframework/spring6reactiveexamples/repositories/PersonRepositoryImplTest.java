@@ -7,6 +7,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created By dhaval on 2023-07-04
@@ -93,5 +94,25 @@ class PersonRepositoryImplTest {
                 .next();
 
         fionaMono.subscribe(person -> log.info(person.getFirstName()));
+    }
+
+    @Test
+    void testFindPersonByIdNotFound() {
+        Flux<Person> personFlux = personRepository.findAll();
+
+        final Integer id = 8;
+
+        Mono<Person> personMono = personFlux.filter(person -> Objects.equals(person.getId(), id)).single()
+                .doOnError(throwable -> {
+                    log.info("Error occurred in the flux");
+                    log.info(throwable.toString());
+                });
+
+        personMono.subscribe(person -> {
+            log.info(person.toString());
+        }, throwable -> {
+            log.info("Error occurred in the mono");
+            log.info(throwable.toString());
+        });
     }
 }
