@@ -9,6 +9,9 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 /**
  * Created By dhaval on 2023-07-04
  */
@@ -17,6 +20,20 @@ import java.util.Objects;
 class PersonRepositoryImplTest {
 
     PersonRepository personRepository = new PersonRepositoryImpl();
+
+    @Test
+    void testGetByIdFound() {
+        Mono<Person> personMono = personRepository.getById(3);
+
+        assertThat(personMono.hasElement().block()).isEqualTo(Boolean.TRUE);
+    }
+
+    @Test
+    void testGetByIdNotFound() {
+        Mono<Person> personMono = personRepository.getById(6);
+
+        assertThat(personMono.hasElement().block()).isFalse();
+    }
 
     @Test
     void testMonoByIdBlock() {
